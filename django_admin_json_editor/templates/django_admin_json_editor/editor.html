@@ -11,7 +11,6 @@
     var {{ name }}_editor;
 
     function {{ name }}_init(container, options) {
-        console.log(options);
         {{ name }}_editor = new JSONEditor(container, options);
         JSONEditor.plugins.sceditor.emoticonsEnabled = {{ sceditor }};
         {{ name }}_editor.on('change', function () {
@@ -38,14 +37,14 @@
 
     {% if schema_choice_field_name %}
     $('#id_{{ schema_choice_field_name }}').change(function(event) {
-        console.log('jquery',event.target.value);
         let schemaToSet = schema_choices[event.target.value];
-        console.log(schemaToSet);
-        schema = schemaToSet;
+        if (schemaToSet === undefined){
+            schemaToSet = {"title": "Undefined Schema"}
+        }
         let newOptions = {
             theme: "bootstrap3",
             iconlib: "fontawesome4",
-            schema: schema
+            schema: schemaToSet
         };
         if ({{ name }}_editor) {
             {{ name }}_editor.destroy();

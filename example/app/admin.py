@@ -220,13 +220,16 @@ class MultipleSchemaJSONModelAdmin(admin.ModelAdmin):
     form = JSONModelAdminFormWithChoices
 
     def get_form(self, request, obj=None, **kwargs):
-        default_schema = DATA_SCHEMA_CHOICES[0]
+        # set default to the "first" one in the dict
+        default_schema = DATA_SCHEMA_CHOICES[next(iter(DATA_SCHEMA_CHOICES))]
         if obj:
             # set the default schema_choice based on the category field.
             # this is needed so when an editing an existing object, the proper schema is used based on
             # the existing data
-            default_schema = DATA_SCHEMA_CHOICES[obj.category]
-        print(default_schema)
+            try:
+                default_schema = DATA_SCHEMA_CHOICES[obj.category]
+            except KeyError:
+                pass
         data_widget = JSONEditorWidget(default_schema, collapsed=False, sceditor=False,
                                        schema_choices=DATA_SCHEMA_CHOICES, schema_choice_field_name="category")
         form = super().get_form(request, obj, widgets={'data': data_widget}, **kwargs)
