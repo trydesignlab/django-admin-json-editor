@@ -3,8 +3,7 @@ from django import forms
 
 from django_admin_json_editor import JSONEditorWidget
 
-from .models import JSONModel, ArrayJSONModel, Tag
-
+from .models import JSONModel, ArrayJSONModel, Tag, MultipleSchemaJSONModel
 
 DATA_SCHEMA = {
     'type': 'object',
@@ -58,6 +57,132 @@ def dynamic_schema(widget):
         }
     }
 
+SCHEMA_A = {
+  "title": "Schema A",
+  "type": "object",
+  "properties": {
+    "schema_a": {
+      "type": "array",
+      "title": "FAQ-A",
+      "uniqueItems": True,
+      "items": {
+        "format": "table",
+        "type": "object",
+        "title": "Category",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "title": "Category Details",
+            "format": "table",
+            "items": {
+              "type": "object",
+              "title": "Item",
+              "properties": {
+                "title_for_a": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string",
+                  "format": "markdown"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+SCHEMA_B = {
+  "title": "Schema B",
+  "type": "object",
+  "properties": {
+    "schema_b": {
+      "type": "array",
+      "title": "FAQ-B",
+      "uniqueItems": True,
+      "items": {
+        "format": "table",
+        "type": "object",
+        "title": "Category",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "title": "Category Details",
+            "format": "table",
+            "items": {
+              "type": "object",
+              "title": "Item",
+              "properties": {
+                "title_for_b": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string",
+                  "format": "markdown"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+SCHEMA_C = {
+  "title": "Schema C",
+  "type": "object",
+  "properties": {
+    "schema_c": {
+      "type": "array",
+      "title": "FAQ-C",
+      "uniqueItems": True,
+      "items": {
+        "format": "table",
+        "type": "object",
+        "title": "Category",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "title": "Category Details",
+            "format": "table",
+            "items": {
+              "type": "object",
+              "title": "Item",
+              "properties": {
+                "title_for_c": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string",
+                  "format": "markdown"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+DATA_SCHEMA_CHOICES = {
+    MultipleSchemaJSONModel.CATEGORY_A: SCHEMA_A,
+    MultipleSchemaJSONModel.CATEGORY_B: SCHEMA_B,
+    MultipleSchemaJSONModel.CATEGORY_C: SCHEMA_C
+}
+
 
 class JSONModelAdminForm(forms.ModelForm):
     class Meta:
@@ -67,6 +192,15 @@ class JSONModelAdminForm(forms.ModelForm):
             'data': JSONEditorWidget(DATA_SCHEMA, collapsed=False, sceditor=True),
         }
 
+
+class JSONModelAdminFormWithChoices(forms.ModelForm):
+    class Meta:
+        model = JSONModel
+        fields = '__all__'
+        widgets = {
+            'data': JSONEditorWidget(SCHEMA_A, collapsed=False, sceditor=False,
+                                     schema_choices=DATA_SCHEMA_CHOICES, schema_choice_field_name="category"),
+        }
 
 @admin.register(JSONModel)
 class JSONModelAdmin(admin.ModelAdmin):
@@ -80,6 +214,23 @@ class ArrayJSONModelAdmin(admin.ModelAdmin):
         form = super().get_form(request, obj, widgets={'roles': widget}, **kwargs)
         return form
 
+
+@admin.register(MultipleSchemaJSONModel)
+class MultipleSchemaJSONModelAdmin(admin.ModelAdmin):
+    form = JSONModelAdminFormWithChoices
+
+    def get_form(self, request, obj=None, **kwargs):
+        default_schema = DATA_SCHEMA_CHOICES[0]
+        if obj:
+            # set the default schema_choice based on the category field.
+            # this is needed so when an editing an existing object, the proper schema is used based on
+            # the existing data
+            default_schema = DATA_SCHEMA_CHOICES[obj.category]
+        print(default_schema)
+        data_widget = JSONEditorWidget(default_schema, collapsed=False, sceditor=False,
+                                       schema_choices=DATA_SCHEMA_CHOICES, schema_choice_field_name="category")
+        form = super().get_form(request, obj, widgets={'data': data_widget}, **kwargs)
+        return form
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):

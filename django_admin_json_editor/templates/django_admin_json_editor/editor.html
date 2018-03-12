@@ -7,21 +7,51 @@
         iconlib: "fontawesome4",
         schema: {{ schema|safe }}
     };
-    var {{ name }}_editor = new JSONEditor(container, options);
-    JSONEditor.plugins.sceditor.emoticonsEnabled = {{ sceditor }};
-    {{ name }}_editor.on('change', function () {
-        var errors = {{ name }}_editor.validate();
-        if (errors.length) {
-            console.log(errors);
+
+    var {{ name }}_editor;
+
+    function {{ name }}_init(container, options) {
+        console.log(options);
+        {{ name }}_editor = new JSONEditor(container, options);
+        JSONEditor.plugins.sceditor.emoticonsEnabled = {{ sceditor }};
+        {{ name }}_editor.on('change', function () {
+            var errors = {{ name }}_editor.validate();
+            if (errors.length) {
+                console.log(errors);
+            }
+            else {
+                var json = {{ name }}_editor.getValue();
+                document.getElementById("id_{{ name }}").value = JSON.stringify(json);
+            }
+        });
+    }
+
+    {{ name }}_init(container, options);
+
+    var initial_json = {{ data|safe }};
+    if (initial_json !== null) {
+        {{ name }}_editor.setValue(initial_json);
+    }
+
+
+    var schema_choices = {{ schema_choices|safe }};
+
+    {% if schema_choice_field_name %}
+    $('#id_{{ schema_choice_field_name }}').change(function(event) {
+        console.log('jquery',event.target.value);
+        let schemaToSet = schema_choices[event.target.value];
+        console.log(schemaToSet);
+        schema = schemaToSet;
+        let newOptions = {
+            theme: "bootstrap3",
+            iconlib: "fontawesome4",
+            schema: schema
+        };
+        if ({{ name }}_editor) {
+            {{ name }}_editor.destroy();
         }
-        else {
-            var json = {{ name }}_editor.getValue();
-            document.getElementById("id_{{ name }}").value = JSON.stringify(json);
-        }
+        {{ name }}_init(container, newOptions);
     });
-    {% if data %}
-        var json = {{ data|safe }};
-        {{ name }}_editor.setValue(json);
     {% endif %}
 </script>
 

@@ -9,11 +9,13 @@ from django.template.loader import render_to_string
 class JSONEditorWidget(forms.Widget):
     template_name = 'django_admin_json_editor/editor.html'
 
-    def __init__(self, schema, collapsed=True, sceditor=False):
+    def __init__(self, schema, collapsed=True, sceditor=False, schema_choices=False, schema_choice_field_name=False):
         super(JSONEditorWidget, self).__init__()
         self._schema = schema
         self._collapsed = collapsed
         self._sceditor = sceditor
+        self._schema_choices = schema_choices
+        self._schema_choice_field_name = schema_choice_field_name
 
     def render(self, name, value, attrs=None, renderer=None):
         if callable(self._schema):
@@ -23,7 +25,17 @@ class JSONEditorWidget(forms.Widget):
 
         self.schema_updater(schema)
 
-        schema['title'] = ' '
+        if self._schema_choices:
+            if callable(self._schema_choices):
+                schema_choices = self._schema_choices(self)
+            else:
+                schema_choices = copy.copy(self._schema_choices)
+
+            for k,v in schema_choices.items():
+                self.schema_updater(v)
+        else:
+            schema_choices = {}
+
         schema['options'] = {'collapsed': int(self._collapsed)}
 
         context = {
@@ -31,6 +43,8 @@ class JSONEditorWidget(forms.Widget):
             'schema': schema,
             'data': value,
             'sceditor': int(self._sceditor),
+            'schema_choices': schema_choices,
+            'schema_choice_field_name': self._schema_choice_field_name
         }
         return mark_safe(render_to_string(self.template_name, context))
 
