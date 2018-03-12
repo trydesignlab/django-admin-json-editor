@@ -66,7 +66,6 @@ SCHEMA_A = {
       "title": "FAQ-A",
       "uniqueItems": True,
       "items": {
-        "format": "table",
         "type": "object",
         "title": "Category",
         "properties": {
@@ -76,7 +75,6 @@ SCHEMA_A = {
           "items": {
             "type": "array",
             "title": "Category Details",
-            "format": "table",
             "items": {
               "type": "object",
               "title": "Item",
@@ -106,7 +104,6 @@ SCHEMA_B = {
       "title": "FAQ-B",
       "uniqueItems": True,
       "items": {
-        "format": "table",
         "type": "object",
         "title": "Category",
         "properties": {
@@ -116,7 +113,6 @@ SCHEMA_B = {
           "items": {
             "type": "array",
             "title": "Category Details",
-            "format": "table",
             "items": {
               "type": "object",
               "title": "Item",
@@ -146,7 +142,6 @@ SCHEMA_C = {
       "title": "FAQ-C",
       "uniqueItems": True,
       "items": {
-        "format": "table",
         "type": "object",
         "title": "Category",
         "properties": {
@@ -156,7 +151,6 @@ SCHEMA_C = {
           "items": {
             "type": "array",
             "title": "Category Details",
-            "format": "table",
             "items": {
               "type": "object",
               "title": "Item",

@@ -71,8 +71,10 @@ class JSONEditorWidget(forms.Widget):
             'django_admin_json_editor/jquery/jquery.min.js',
             'django_admin_json_editor/bootstrap/js/bootstrap.min.js',
             'django_admin_json_editor/jsoneditor/jsoneditor.min.js',
+            'django_admin_json_editor/epiceditor/js/epiceditor.min.js'
         ]
         if self._sceditor:
             css['all'].append('django_admin_json_editor/sceditor/themes/default.min.css')
             js.append('django_admin_json_editor/sceditor/jquery.sceditor.bbcode.min.js')
+
         return forms.Media(css=css, js=js)
