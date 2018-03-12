@@ -81,3 +81,171 @@ class JSONModelAdmin(admin.ModelAdmin):
         return form
 ```
 
+### Multiple schemas
+
+Its possible to define multiple schemas that change based off a select field.
+
+example models.py
+```python
+class MultipleSchemaJSONModel(models.Model):
+    CATEGORY_A, CATEGORY_B, CATEGORY_C = range(0, 3)
+    CATEGORY_CHOICES = (
+        (CATEGORY_A, 'Category A'),
+        (CATEGORY_B, 'Category B'),
+        (CATEGORY_C, 'Category C')
+    )
+    category = models.PositiveIntegerField(choices=CATEGORY_CHOICES, default=CATEGORY_A)
+    data = JSONField()
+```
+
+admin.py
+
+```python
+# Define your schemas
+SCHEMA_A = {
+  "title": "Schema A",
+  "type": "object",
+  "properties": {
+    "schema_a": {
+      "type": "array",
+      "title": "FAQ-A",
+      "uniqueItems": True,
+      "items": {
+        "format": "table",
+        "type": "object",
+        "title": "Category",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "title": "Category Details",
+            "format": "table",
+            "items": {
+              "type": "object",
+              "title": "Item",
+              "properties": {
+                "title_for_a": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string",
+                  "format": "markdown"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+SCHEMA_B = {
+  "title": "Schema B",
+  "type": "object",
+  "properties": {
+    "schema_b": {
+      "type": "array",
+      "title": "FAQ-B",
+      "uniqueItems": True,
+      "items": {
+        "format": "table",
+        "type": "object",
+        "title": "Category",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "title": "Category Details",
+            "format": "table",
+            "items": {
+              "type": "object",
+              "title": "Item",
+              "properties": {
+                "title_for_b": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string",
+                  "format": "markdown"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+SCHEMA_C = {
+  "title": "Schema C",
+  "type": "object",
+  "properties": {
+    "schema_c": {
+      "type": "array",
+      "title": "FAQ-C",
+      "uniqueItems": True,
+      "items": {
+        "format": "table",
+        "type": "object",
+        "title": "Category",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "title": "Category Details",
+            "format": "table",
+            "items": {
+              "type": "object",
+              "title": "Item",
+              "properties": {
+                "title_for_c": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string",
+                  "format": "markdown"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+# Map category choices or other values to your schemas
+DATA_SCHEMA_CHOICES = {
+    MultipleSchemaJSONModel.CATEGORY_A: SCHEMA_A,
+    MultipleSchemaJSONModel.CATEGORY_B: SCHEMA_B,
+    MultipleSchemaJSONModel.CATEGORY_C: SCHEMA_C
+}
+
+class MultipleSchemaJSONModelAdmin(admin.ModelAdmin):
+    form = JSONModelAdminFormWithChoices
+
+    def get_form(self, request, obj=None, **kwargs):
+        # set default to the "first" one in the dict
+        default_schema = DATA_SCHEMA_CHOICES[next(iter(DATA_SCHEMA_CHOICES))]
+        if obj:
+            # set the default schema_choice based on the category field.
+            # this is needed so when an editing an existing object, the proper schema is used based on
+            # the existing data
+            try:
+                default_schema = DATA_SCHEMA_CHOICES[obj.category]
+            except KeyError:
+                pass
+        data_widget = JSONEditorWidget(default_schema, collapsed=False, sceditor=False,
+                                       schema_choices=DATA_SCHEMA_CHOICES, schema_choice_field_name="category")
+        form = super().get_form(request, obj, widgets={'data': data_widget}, **kwargs)
+        return form
+```
+
