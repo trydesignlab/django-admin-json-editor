@@ -17,6 +17,14 @@ class JSONEditorWidget(forms.Widget):
         self._schema_choices = schema_choices
         self._schema_choice_field_name = schema_choice_field_name
 
+        if schema_choices and schema_choice_field_name:
+            if type(schema_choices) != dict:
+                raise TypeError("schema_choices must be a dict, but type of \"%s\" was given" % type(schema_choices))
+            if type(schema_choice_field_name) != str:
+                raise TypeError("schema_choice_field_name must be a string, but type of \"%s\" was given" % type(schema_choice_field_name))
+        elif (schema_choices and not schema_choice_field_name) or (schema_choice_field_name and not schema_choices):
+            raise AttributeError("schema_choices and schema_choice_field_name must be supplied together.")
+
     def render(self, name, value, attrs=None, renderer=None):
         if callable(self._schema):
             schema = self._schema(self)

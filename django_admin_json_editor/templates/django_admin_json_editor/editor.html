@@ -34,38 +34,41 @@
         {{ name }}_editor.setValue(initial_json);
     }
 
-
+    {% if schema_choice_field_name and schema_choices %}
     var schema_choices = {{ schema_choices|safe }};
-
-    {% if schema_choice_field_name %}
     let ${{ schema_choice_field_name }} = $('#id_{{ schema_choice_field_name }}');
-    $.data(${{ schema_choice_field_name }}, "current", ${{ schema_choice_field_name }}.val()); // store the current value
+    if ( ${{ schema_choice_field_name }}.length ) {
+        $.data(${{ schema_choice_field_name }}, "current", ${{ schema_choice_field_name }}.val()); // store the current value
 
-    ${{ schema_choice_field_name }}.change(function(event) {
+        ${{ schema_choice_field_name }}.change(function(event) {
 
-        let changeSchema = confirm("Changing '{{ schema_choice_field_name }}' will clear any data in '{{ name }}'. Do you still want to change '{{ schema_choice_field_name }}'?");
-        if (changeSchema) {
-            let schemaToSet = schema_choices[event.target.value];
-            if (schemaToSet === undefined){
-                schemaToSet = {"title": "Undefined Schema"}
+            let changeSchema = confirm("Changing '{{ schema_choice_field_name }}' will clear any data in '{{ name }}'. Do you still want to change '{{ schema_choice_field_name }}'?");
+            if (changeSchema) {
+                let schemaToSet = schema_choices[event.target.value];
+                if (schemaToSet === undefined){
+                    schemaToSet = {"title": "Undefined Schema"}
+                }
+                let newOptions = {
+                    theme: "bootstrap3",
+                    iconlib: "fontawesome4",
+                    schema: schemaToSet
+                };
+                if ({{ name }}_editor) {
+                    {{ name }}_editor.destroy();
+                }
+                {{ name }}_init(container, newOptions);
+                $.data(${{ schema_choice_field_name }}, "current", ${{ schema_choice_field_name }}.val()); // update current value
+            } else {
+                // undo the category change
+                ${{ schema_choice_field_name }}.val( $.data(${{ schema_choice_field_name }}, "current")); // rollback to the old value
+                event.preventDefault();
+
             }
-            let newOptions = {
-                theme: "bootstrap3",
-                iconlib: "fontawesome4",
-                schema: schemaToSet
-            };
-            if ({{ name }}_editor) {
-                {{ name }}_editor.destroy();
-            }
-            {{ name }}_init(container, newOptions);
-            $.data(${{ schema_choice_field_name }}, "current", ${{ schema_choice_field_name }}.val()); // update current value
-        } else {
-            // undo the category change
-            ${{ schema_choice_field_name }}.val( $.data(${{ schema_choice_field_name }}, "current")); // rollback to the old value
-            event.preventDefault();
+        });
+    } else {
+        alert('The field passed to schema_choice_field_name ({{ schema_choice_field_name }}) was not found.  We cannot dynamically change the schema.');
+    }
 
-        }
-    });
     {% endif %}
 </script>
 
