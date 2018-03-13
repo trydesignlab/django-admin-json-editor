@@ -186,16 +186,6 @@ class JSONModelAdminForm(forms.ModelForm):
             'data': JSONEditorWidget(DATA_SCHEMA, collapsed=False, sceditor=True),
         }
 
-
-class JSONModelAdminFormWithChoices(forms.ModelForm):
-    class Meta:
-        model = JSONModel
-        fields = '__all__'
-        widgets = {
-            'data': JSONEditorWidget(SCHEMA_A, collapsed=False, sceditor=False,
-                                     schema_choices=DATA_SCHEMA_CHOICES, schema_choice_field_name="category"),
-        }
-
 @admin.register(JSONModel)
 class JSONModelAdmin(admin.ModelAdmin):
     form = JSONModelAdminForm
@@ -211,8 +201,6 @@ class ArrayJSONModelAdmin(admin.ModelAdmin):
 
 @admin.register(MultipleSchemaJSONModel)
 class MultipleSchemaJSONModelAdmin(admin.ModelAdmin):
-    form = JSONModelAdminFormWithChoices
-
     def get_form(self, request, obj=None, **kwargs):
         # set default to the "first" one in the dict
         default_schema = DATA_SCHEMA_CHOICES[next(iter(DATA_SCHEMA_CHOICES))]

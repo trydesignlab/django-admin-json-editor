@@ -229,9 +229,9 @@ DATA_SCHEMA_CHOICES = {
     MultipleSchemaJSONModel.CATEGORY_C: SCHEMA_C
 }
 
-class MultipleSchemaJSONModelAdmin(admin.ModelAdmin):
-    form = JSONModelAdminFormWithChoices
 
+@admin.register(MultipleSchemaJSONModel)
+class MultipleSchemaJSONModelAdmin(admin.ModelAdmin):
     def get_form(self, request, obj=None, **kwargs):
         # set default to the "first" one in the dict
         default_schema = DATA_SCHEMA_CHOICES[next(iter(DATA_SCHEMA_CHOICES))]
