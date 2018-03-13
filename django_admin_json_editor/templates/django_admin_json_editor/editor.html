@@ -73,6 +73,11 @@
 
     {% endif %}
 </script>
+<style>
+    {# In the django admin, labels get floated.  Markdown editors in particular then have clearing issues and run into other fields. #}
+    {# putting it in here to keep it scoped to just this element #}
+   #{{ name }}_editor .form-group label { float: none; }
+</style>
 
 <textarea cols="40" id="id_{{ name }}" name="{{ name }}" rows="10" required=""
           style="display: none">{{ data|safe }}</textarea>
