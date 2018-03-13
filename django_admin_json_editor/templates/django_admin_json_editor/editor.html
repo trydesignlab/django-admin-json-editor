@@ -43,7 +43,7 @@
 
     ${{ schema_choice_field_name }}.change(function(event) {
 
-        let changeSchema = confirm("Changing {{ schema_choice_field_name }} will wipe out data, do you want to change?");
+        let changeSchema = confirm("Changing '{{ schema_choice_field_name }}' will clear any data in '{{ name }}'. Do you still want to change '{{ schema_choice_field_name }}'?");
         if (changeSchema) {
             let schemaToSet = schema_choices[event.target.value];
             if (schemaToSet === undefined){
