@@ -38,20 +38,33 @@
     var schema_choices = {{ schema_choices|safe }};
 
     {% if schema_choice_field_name %}
-    $('#id_{{ schema_choice_field_name }}').change(function(event) {
-        let schemaToSet = schema_choices[event.target.value];
-        if (schemaToSet === undefined){
-            schemaToSet = {"title": "Undefined Schema"}
+    let ${{ schema_choice_field_name }} = $('#id_{{ schema_choice_field_name }}');
+    $.data(${{ schema_choice_field_name }}, "current", ${{ schema_choice_field_name }}.val()); // store the current value
+
+    ${{ schema_choice_field_name }}.change(function(event) {
+
+        let changeSchema = confirm("Changing {{ schema_choice_field_name }} will wipe out data, do you want to change?");
+        if (changeSchema) {
+            let schemaToSet = schema_choices[event.target.value];
+            if (schemaToSet === undefined){
+                schemaToSet = {"title": "Undefined Schema"}
+            }
+            let newOptions = {
+                theme: "bootstrap3",
+                iconlib: "fontawesome4",
+                schema: schemaToSet
+            };
+            if ({{ name }}_editor) {
+                {{ name }}_editor.destroy();
+            }
+            {{ name }}_init(container, newOptions);
+            $.data(${{ schema_choice_field_name }}, "current", ${{ schema_choice_field_name }}.val()); // update current value
+        } else {
+            // undo the category change
+            ${{ schema_choice_field_name }}.val( $.data(${{ schema_choice_field_name }}, "current")); // rollback to the old value
+            event.preventDefault();
+
         }
-        let newOptions = {
-            theme: "bootstrap3",
-            iconlib: "fontawesome4",
-            schema: schemaToSet
-        };
-        if ({{ name }}_editor) {
-            {{ name }}_editor.destroy();
-        }
-        {{ name }}_init(container, newOptions);
     });
     {% endif %}
 </script>
