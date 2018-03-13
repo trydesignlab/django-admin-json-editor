@@ -29,18 +29,20 @@
 
     {{ name }}_init(container, options);
 
+    {% if data %}
     var initial_json = {{ data|safe }};
     if (initial_json !== null) {
         {{ name }}_editor.setValue(initial_json);
     }
+    {% endif %}
 
     {% if schema_choice_field_name and schema_choices %}
     var schema_choices = {{ schema_choices|safe }};
-    let ${{ schema_choice_field_name }} = $('#id_{{ schema_choice_field_name }}');
-    if ( ${{ schema_choice_field_name }}.length ) {
-        $.data(${{ schema_choice_field_name }}, "current", ${{ schema_choice_field_name }}.val()); // store the current value
+    let ${{ schema_choice_field_name }}_{{ name }} = $('#id_{{ schema_choice_field_name }}');
+    if ( ${{ schema_choice_field_name }}_{{ name }}.length ) {
+        $.data(${{ schema_choice_field_name }}_{{ name }}, "current", ${{ schema_choice_field_name }}_{{ name }}.val()); // store the current value
 
-        ${{ schema_choice_field_name }}.change(function(event) {
+        ${{ schema_choice_field_name }}_{{ name }}.change(function(event) {
 
             let changeSchema = confirm("Changing '{{ schema_choice_field_name }}' will clear any data in '{{ name }}'. Do you still want to change '{{ schema_choice_field_name }}'?");
             if (changeSchema) {
@@ -57,10 +59,10 @@
                     {{ name }}_editor.destroy();
                 }
                 {{ name }}_init(container, newOptions);
-                $.data(${{ schema_choice_field_name }}, "current", ${{ schema_choice_field_name }}.val()); // update current value
+                $.data(${{ schema_choice_field_name }}_{{ name }}, "current", ${{ schema_choice_field_name }}_{{ name }}.val()); // update current value
             } else {
                 // undo the category change
-                ${{ schema_choice_field_name }}.val( $.data(${{ schema_choice_field_name }}, "current")); // rollback to the old value
+                ${{ schema_choice_field_name }}_{{ name }}.val( $.data(${{ schema_choice_field_name }}_{{ name }}, "current")); // rollback to the old value
                 event.preventDefault();
 
             }
