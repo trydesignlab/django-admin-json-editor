@@ -15,7 +15,6 @@
     function {{ name }}_init(container, options) {
         {{ name }}_editor = new JSONEditor(container, options);
         JSONEditor.plugins.sceditor.emoticonsEnabled = {{ sceditor }};
-        JSONEditor.plugins.epiceditor.basePath = "{% static 'django_admin_json_editor/epiceditor' %}";
         {{ name }}_editor.on('change', function () {
             var errors = {{ name }}_editor.validate();
             if (errors.length) {

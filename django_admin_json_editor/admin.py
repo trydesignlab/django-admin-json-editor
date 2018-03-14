@@ -59,13 +59,14 @@ class JSONEditorWidget(forms.Widget):
                 'django_admin_json_editor/bootstrap/css/bootstrap.min.css',
                 'django_admin_json_editor/fontawesome/css/font-awesome.min.css',
                 'django_admin_json_editor/style.css',
+                'django_admin_json_editor/simplemde/simplemde.min.css'
             ]
         }
         js = [
             'django_admin_json_editor/jquery/jquery.min.js',
             'django_admin_json_editor/bootstrap/js/bootstrap.min.js',
             'django_admin_json_editor/jsoneditor/jsoneditor.min.js',
-            'django_admin_json_editor/epiceditor/js/epiceditor.min.js'
+            'django_admin_json_editor/simplemde/simplemde.min.js'
         ]
         if self._sceditor:
             css['all'].append('django_admin_json_editor/sceditor/themes/default.min.css')
