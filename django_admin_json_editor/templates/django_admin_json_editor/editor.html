@@ -1,4 +1,5 @@
 {% load static from staticfiles %}
+{% load django_admin_json_editor_tags %}
 <div id="{{ name }}_editor"></div>
 
 <script>
@@ -6,7 +7,7 @@
     var options = {
         theme: "bootstrap3",
         iconlib: "fontawesome4",
-        schema: {{ schema|safe }}
+        schema: {{ schema|json_dumps }}
     };
 
     var {{ name }}_editor;
@@ -37,7 +38,7 @@
     {% endif %}
 
     {% if schema_choice_field_name and schema_choices %}
-    var schema_choices = {{ schema_choices|safe }};
+    var schema_choices = {{ schema_choices|json_dumps }};
     let ${{ schema_choice_field_name }}_{{ name }} = $('#id_{{ schema_choice_field_name }}');
     if ( ${{ schema_choice_field_name }}_{{ name }}.length ) {
         $.data(${{ schema_choice_field_name }}_{{ name }}, "current", ${{ schema_choice_field_name }}_{{ name }}.val()); // store the current value

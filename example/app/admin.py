@@ -134,36 +134,29 @@ SCHEMA_B = {
 }
 
 SCHEMA_C = {
-  "title": "Schema C",
+  "title": "Lecture Slide Data",
   "type": "object",
   "properties": {
-    "schema_c": {
+    "slide_show": {
       "type": "array",
-      "title": "FAQ-C",
+      "title": "Slides",
       "uniqueItems": True,
       "items": {
         "type": "object",
-        "title": "Category",
+        "title": "Slide",
         "properties": {
           "title": {
-            "type": "string"
+            "type": "string",
+              "description": "Adding a title will include in the table of contents"
           },
-          "items": {
-            "type": "array",
-            "title": "Category Details",
-            "items": {
-              "type": "object",
-              "title": "Item",
-              "properties": {
-                "title_for_c": {
-                  "type": "string"
-                },
-                "description": {
-                  "type": "string",
-                  "format": "markdown"
-                }
-              }
-            }
+          "markdown_a": {
+            "type": "string",
+            "format": "markdown"
+          },
+          "markdown_b": {
+            "type": "string",
+            "format": "markdown",
+            "description": "Optional Markdown field for two column layouts"
           }
         }
       }
