@@ -40,7 +40,10 @@ class JSONEditorWidget(forms.Widget):
         else:
             schema_choices = {}
 
-        schema['options'] = {'collapsed': int(self._collapsed)}
+        if 'options' not in schema:
+            schema['options'] = {}
+
+        schema['options']['collapsed']: self._collapsed
 
         context = {
             'name': name,

@@ -60,6 +60,9 @@ def dynamic_schema(widget):
 SCHEMA_A = {
   "title": "Schema A",
   "type": "object",
+  "options": {
+    "disable_properties": True
+  },
   "properties": {
     "schema_a": {
       "type": "array",
