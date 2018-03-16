@@ -43,7 +43,7 @@ class JSONEditorWidget(forms.Widget):
         if 'options' not in schema:
             schema['options'] = {}
 
-        schema['options']['collapsed']: self._collapsed
+        schema['options']['collapsed'] = self._collapsed
 
         context = {
             'name': name,
