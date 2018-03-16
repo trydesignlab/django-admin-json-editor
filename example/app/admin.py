@@ -209,7 +209,8 @@ class MultipleSchemaJSONModelAdmin(admin.ModelAdmin):
             except KeyError:
                 pass
         data_widget = JSONEditorWidget(default_schema, collapsed=False, sceditor=False,
-                                       schema_choices=DATA_SCHEMA_CHOICES, schema_choice_field_name="category")
+                                       schema_choices=DATA_SCHEMA_CHOICES, schema_choice_field_name="category",
+                                       default_options={"disable_properties": True})
         form = super().get_form(request, obj, widgets={'data': data_widget}, **kwargs)
         return form
 

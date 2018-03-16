@@ -9,13 +9,14 @@ from django.template.loader import render_to_string
 class JSONEditorWidget(forms.Widget):
     template_name = 'django_admin_json_editor/editor.html'
 
-    def __init__(self, schema, collapsed=True, sceditor=False, schema_choices=False, schema_choice_field_name=False):
+    def __init__(self, schema, collapsed=True, sceditor=False, schema_choices=False, schema_choice_field_name=False, default_options=False):
         super(JSONEditorWidget, self).__init__()
         self._schema = schema
         self._collapsed = collapsed
         self._sceditor = sceditor
         self._schema_choices = schema_choices
         self._schema_choice_field_name = schema_choice_field_name
+        self._default_options = default_options if default_options else {}
 
         if schema_choices and schema_choice_field_name:
             if type(schema_choices) != dict:
@@ -24,6 +25,9 @@ class JSONEditorWidget(forms.Widget):
                 raise TypeError("schema_choice_field_name must be a string, but type of \"%s\" was given" % type(schema_choice_field_name))
         elif (schema_choices and not schema_choice_field_name) or (schema_choice_field_name and not schema_choices):
             raise AttributeError("schema_choices and schema_choice_field_name must be supplied together.")
+
+        if default_options and type(default_options) != dict:
+            raise TypeError("default_options must be a dict, but type of \"%s\" was given" % type(default_options))
 
     def render(self, name, value, attrs=None, renderer=None):
         if callable(self._schema):
@@ -51,7 +55,8 @@ class JSONEditorWidget(forms.Widget):
             'data': value,
             'sceditor': int(self._sceditor),
             'schema_choices': schema_choices,
-            'schema_choice_field_name': self._schema_choice_field_name
+            'schema_choice_field_name': self._schema_choice_field_name,
+            'default_options': self._default_options
         }
         return mark_safe(render_to_string(self.template_name, context))
 

@@ -13,6 +13,7 @@
     var {{ name }}_editor;
 
     function {{ name }}_init(container, options) {
+        JSONEditor.defaults.options = {{ default_options|json_dumps }};
         {{ name }}_editor = new JSONEditor(container, options);
         JSONEditor.plugins.sceditor.emoticonsEnabled = {{ sceditor }};
         {{ name }}_editor.on('change', function () {
