@@ -147,6 +147,7 @@ SCHEMA_C = {
       "items": {
         "type": "object",
         "title": "Slide",
+        "headerTemplate": "{{#if self.title}}{{ i1 }} - {{ self.title }}{{else}}Slide {{ i1 }}{{/if}}",
         "properties": {
           "title": {
             "type": "string",
@@ -210,7 +211,7 @@ class MultipleSchemaJSONModelAdmin(admin.ModelAdmin):
                 pass
         data_widget = JSONEditorWidget(default_schema, collapsed=False, sceditor=False,
                                        schema_choices=DATA_SCHEMA_CHOICES, schema_choice_field_name="category",
-                                       default_options={"disable_properties": True})
+                                       default_options={"disable_properties": True, 'template': 'handlebars'})
         form = super().get_form(request, obj, widgets={'data': data_widget}, **kwargs)
         return form
 

@@ -80,4 +80,7 @@ class JSONEditorWidget(forms.Widget):
             css['all'].append('django_admin_json_editor/sceditor/themes/default.min.css')
             js.append('django_admin_json_editor/sceditor/jquery.sceditor.bbcode.min.js')
 
+        if self._default_options.get('template') == 'handlebars':
+            js.append('django_admin_json_editor/handlebars/handlebars-v4.0.11.js')
+
         return forms.Media(css=css, js=js)
