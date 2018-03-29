@@ -110,3 +110,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Example Overrides of SimpleMDE
+DAJE_SIMPLE_MDE_CSS = ['app/simplemde.min.css']
+DAJE_SIMPLE_MDE_JS = ['app/simplemde.min.js', 'app/designlab-showdown-extensions.min.js']

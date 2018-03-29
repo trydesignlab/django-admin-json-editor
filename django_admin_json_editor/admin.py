@@ -2,6 +2,7 @@ import copy
 
 import collections
 from django import forms
+from .conf import conf
 from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
 
@@ -62,19 +63,19 @@ class JSONEditorWidget(forms.Widget):
 
     @property
     def media(self):
+
+
         css = {
             'all': [
                 'django_admin_json_editor/bootstrap/css/bootstrap.min.css',
                 'django_admin_json_editor/fontawesome/css/font-awesome.min.css',
                 'django_admin_json_editor/style.css',
-                'django_admin_json_editor/simplemde/simplemde.min.css'
             ]
         }
         js = [
             'django_admin_json_editor/jquery/jquery.min.js',
             'django_admin_json_editor/bootstrap/js/bootstrap.min.js',
             'django_admin_json_editor/jsoneditor/jsoneditor.min.js',
-            'django_admin_json_editor/simplemde/simplemde.min.js'
         ]
         if self._sceditor:
             css['all'].append('django_admin_json_editor/sceditor/themes/default.min.css')
@@ -82,5 +83,9 @@ class JSONEditorWidget(forms.Widget):
 
         if self._default_options.get('template') == 'handlebars':
             js.append('django_admin_json_editor/handlebars/handlebars-v4.0.11.js')
+
+        # Load our default Simple MDE files, but these can be overridden in django settings.
+        css['all'] += conf.DAJE_SIMPLE_MDE_CSS
+        js += conf.DAJE_SIMPLE_MDE_JS
 
         return forms.Media(css=css, js=js)
