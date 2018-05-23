@@ -10,46 +10,46 @@
         schema: {{ schema|json_dumps }}
     };
 
-    var {{ name }}_editor;
+    var {{ js_name }}_editor;
 
-    var {{ name }}_changees = 0;
+    var {{ js_name }}_changees = 0;
 
-    function {{ name }}_init(container, options) {
-        {{ name }}_changees = 0;
+    function {{ js_name }}_init(container, options) {
+        {{ js_name }}_changees = 0;
         JSONEditor.defaults.options = {{ default_options|json_dumps }};
-        {{ name }}_editor = new JSONEditor(container, options);
+        {{ js_name }}_editor = new JSONEditor(container, options);
         JSONEditor.plugins.sceditor.emoticonsEnabled = {{ sceditor }};
-        {{ name }}_editor.on('change', function () {
-            {{ name }}_changees ++;
-            var errors = {{ name }}_editor.validate();
+        {{ js_name }}_editor.on('change', function () {
+            {{ js_name }}_changees ++;
+            var errors = {{ js_name }}_editor.validate();
             if (errors.length) {
                 console.log(errors);
             }
             else {
-                var json = {{ name }}_editor.getValue();
+                var json = {{ js_name }}_editor.getValue();
                 document.getElementById("id_{{ name }}").value = JSON.stringify(json);
             }
         });
     }
 
-    {{ name }}_init(container, options);
+    {{ js_name }}_init(container, options);
 
     {% if data %}
     var initial_json = {{ data|safe }};
     if (initial_json !== null) {
-        {{ name }}_editor.setValue(initial_json);
+        {{ js_name }}_editor.setValue(initial_json);
     }
     {% endif %}
 
     {% if schema_choice_field_name and schema_choices %}
     var schema_choices = {{ schema_choices|json_dumps }};
-    let ${{ schema_choice_field_name }}_{{ name }} = $('#id_{{ schema_choice_field_name }}');
-    if ( ${{ schema_choice_field_name }}_{{ name }}.length ) {
-        $.data(${{ schema_choice_field_name }}_{{ name }}, "current", ${{ schema_choice_field_name }}_{{ name }}.val()); // store the current value
+    let ${{ schema_choice_field_name }}_{{ js_name }} = $('#id_{{ schema_choice_field_name }}');
+    if ( ${{ schema_choice_field_name }}_{{ js_name }}.length ) {
+        $.data(${{ schema_choice_field_name }}_{{ js_name }}, "current", ${{ schema_choice_field_name }}_{{ js_name }}.val()); // store the current value
 
-        ${{ schema_choice_field_name }}_{{ name }}.change(function(event) {
+        ${{ schema_choice_field_name }}_{{ js_name }}.change(function(event) {
             let changeSchema = true;
-            if ({{ name }}_changees > 1) {
+            if ({{ js_name }}_changees > 1) {
                 // only fire this alert if we have made changes.
                 changeSchema = confirm("Changing '{{ schema_choice_field_name }}' will clear any data in '{{ name }}'. Do you still want to change '{{ schema_choice_field_name }}'?");
             }
@@ -63,14 +63,14 @@
                     iconlib: "fontawesome4",
                     schema: schemaToSet
                 };
-                if ({{ name }}_editor) {
-                    {{ name }}_editor.destroy();
+                if ({{ js_name }}_editor) {
+                    {{ js_name }}_editor.destroy();
                 }
-                {{ name }}_init(container, newOptions);
-                $.data(${{ schema_choice_field_name }}_{{ name }}, "current", ${{ schema_choice_field_name }}_{{ name }}.val()); // update current value
+                {{ js_name }}_init(container, newOptions);
+                $.data(${{ schema_choice_field_name }}_{{ js_name }}, "current", ${{ schema_choice_field_name }}_{{ js_name }}.val()); // update current value
             } else {
                 // undo the category change
-                ${{ schema_choice_field_name }}_{{ name }}.val( $.data(${{ schema_choice_field_name }}_{{ name }}, "current")); // rollback to the old value
+                ${{ schema_choice_field_name }}_{{ js_name }}.val( $.data(${{ schema_choice_field_name }}_{{ js_name }}, "current")); // rollback to the old value
                 event.preventDefault();
 
             }
