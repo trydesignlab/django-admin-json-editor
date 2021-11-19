@@ -1,16 +1,14 @@
-import copy
+import json
 
-import collections
 from django import forms
-from .conf import conf
-from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
+from django.utils.safestring import mark_safe
 
 
 class JSONEditorWidget(forms.Widget):
     template_name = 'django_admin_json_editor/editor.html'
 
-    def __init__(self, schema, collapsed=True, sceditor=False, schema_choices=False, schema_choice_field_name=False, default_options=False):
+    def __init__(self, schema, collapsed=True, sceditor=False, editor_options=None):
         super(JSONEditorWidget, self).__init__()
         self._schema = schema
         self._collapsed = collapsed
@@ -30,17 +28,17 @@ class JSONEditorWidget(forms.Widget):
         if default_options and type(default_options) != dict:
             raise TypeError("default_options must be a dict, but type of \"%s\" was given" % type(default_options))
 
+        self._editor_options = {
+            'theme': 'bootstrap4',
+            'iconlib': 'fontawesome4',
+        }
+        self._editor_options.update(editor_options or {})
+
     def render(self, name, value, attrs=None, renderer=None):
         if callable(self._schema):
             schema = self._schema(self)
         else:
-            schema = copy.copy(self._schema)
-
-        if self._schema_choices:
-            if callable(self._schema_choices):
-                schema_choices = self._schema_choices(self)
-            else:
-                schema_choices = copy.copy(self._schema_choices)
+            schema = self._schema
 
         else:
             schema_choices = {}
@@ -50,15 +48,13 @@ class JSONEditorWidget(forms.Widget):
 
         schema['options']['collapsed'] = self._collapsed
 
+        editor_options = self._editor_options.copy()
+        editor_options['schema'] = schema
+
         context = {
             'name': name,
-            'js_name': name.replace('-','_'),
-            'schema': schema,
             'data': value,
-            'sceditor': int(self._sceditor),
-            'schema_choices': schema_choices,
-            'schema_choice_field_name': self._schema_choice_field_name,
-            'default_options': self._default_options
+            'editor_options': json.dumps(editor_options),
         }
         return mark_safe(render_to_string(self.template_name, context))
 
@@ -68,16 +64,19 @@ class JSONEditorWidget(forms.Widget):
 
         css = {
             'all': [
-                'django_admin_json_editor/bootstrap/css/bootstrap.min.css',
                 'django_admin_json_editor/fontawesome/css/font-awesome.min.css',
                 'django_admin_json_editor/style.css',
             ]
         }
         js = [
-            'django_admin_json_editor/jquery/jquery.min.js',
-            'django_admin_json_editor/bootstrap/js/bootstrap.min.js',
             'django_admin_json_editor/jsoneditor/jsoneditor.min.js',
         ]
+
+        if self._editor_options['theme'] == 'bootstrap4':
+            css['all'].append('django_admin_json_editor/bootstrap/css/bootstrap.min.css')
+            js.append('django_admin_json_editor/jquery/jquery-3.5.1.slim.min.js')
+            js.append('django_admin_json_editor/bootstrap/js/bootstrap.bundle.min.js')
+
         if self._sceditor:
             css['all'].append('django_admin_json_editor/sceditor/themes/default.min.css')
             js.append('django_admin_json_editor/sceditor/jquery.sceditor.bbcode.min.js')

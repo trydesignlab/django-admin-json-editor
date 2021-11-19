@@ -4,36 +4,18 @@
 
 <script>
     var container = document.getElementById("{{ name }}_editor");
-    var options = {
-        theme: "bootstrap3",
-        iconlib: "fontawesome4",
-        schema: {{ schema|json_dumps }}
-    };
-
-    var {{ js_name }}_editor;
-
-    var {{ js_name }}_changees = 0;
-
-    function {{ js_name }}_init(container, options) {
-        {{ js_name }}_changees = 0;
-        JSONEditor.defaults.options = {{ default_options|json_dumps }};
-        {{ js_name }}_editor = new JSONEditor(container, options);
-        JSONEditor.plugins.sceditor.emoticonsEnabled = {{ sceditor }};
-        {{ js_name }}_editor.on('change', function () {
-            {{ js_name }}_changees ++;
-            var errors = {{ js_name }}_editor.validate();
-            if (errors.length) {
-                console.log(errors);
-            }
-            else {
-                var json = {{ js_name }}_editor.getValue();
-                document.getElementById("id_{{ name }}").value = JSON.stringify(json);
-            }
-        });
-    }
-
-    {{ js_name }}_init(container, options);
-
+    var options = {{ editor_options|safe }};
+    var {{ name }}_editor = new JSONEditor(container, options);
+    {{ name }}_editor.on('change', function () {
+        var errors = {{ name }}_editor.validate();
+        if (errors.length) {
+            console.log(errors);
+        }
+        else {
+            var json = {{ name }}_editor.getValue();
+            document.getElementById("id_{{ name }}").value = JSON.stringify(json);
+        }
+    });
     {% if data %}
     var initial_json = {{ data|safe }};
     if (initial_json !== null) {

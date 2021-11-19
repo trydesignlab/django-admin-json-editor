@@ -2,9 +2,10 @@
 
 [![Build Status](https://travis-ci.org/abogushov/django-admin-json-editor.svg?branch=master)](https://travis-ci.org/abogushov/django-admin-json-editor)
 
+![Admin Json Editor](example/example.png)
 
 
-Application adds support for editing JSONField in Django Administration via https://github.com/jdorn/json-editor.
+Application adds support for editing JSONField in Django Administration via https://github.com/json-editor/json-editor.
 
 ## Quick start
 
