@@ -3,6 +3,7 @@
 <div id="{{ name }}_editor"></div>
 
 <script>
+addEventListener("DOMContentLoaded", (event) => {
     var container = document.getElementById("{{ name }}_editor");
     var options = {
         theme: "bootstrap3",
@@ -80,6 +81,7 @@
     }
 
     {% endif %}
+});
 </script>
 <style>
     {# In the django admin, labels get floated.  Markdown editors in particular then have clearing issues and run into other fields. #}
