@@ -3,6 +3,9 @@
 <div id="{{ name }}_editor"></div>
 
 <script>
+var {{ js_name }}_editor;
+var {{ js_name }}_changees = 0;
+
 addEventListener("DOMContentLoaded", (event) => {
     var container = document.getElementById("{{ name }}_editor");
     var options = {
@@ -10,10 +13,6 @@ addEventListener("DOMContentLoaded", (event) => {
         iconlib: "fontawesome4",
         schema: {{ schema|json_dumps }}
     };
-
-    var {{ js_name }}_editor;
-
-    var {{ js_name }}_changees = 0;
 
     function {{ js_name }}_init(container, options) {
         {{ js_name }}_changees = 0;
